@@ -52,7 +52,7 @@ User.prototype.validate = function() {
     }
 
     let leagueExists = await leaguesCollection.findOne({leagueId: this.data.leagueId});
-    if(!leagueExists) {this.errors.push("Invalid League Id")}
+    if(!leagueExists) {this.errors.push("League Id not found.")}
 
     resolve()
   })
