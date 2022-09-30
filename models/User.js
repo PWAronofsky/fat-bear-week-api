@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs")
 const usersCollection = require('../db').db().collection("users")
+const leaguesCollection = require('../db').db().collection("leagues")
 const validator = require("validator")
 const md5 = require('md5')
 
@@ -49,6 +50,10 @@ User.prototype.validate = function() {
       let emailExists = await usersCollection.findOne({email: this.data.email})
       if (emailExists) {this.errors.push("That email is already being used.")}
     }
+
+    let leagueExists = await leaguesCollection.findOne({leagueId: this.data.leagueId});
+    if(!leagueExists) {this.errors.push("Invalid League Id")}
+
     resolve()
   })
 }
