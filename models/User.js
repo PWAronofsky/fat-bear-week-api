@@ -120,8 +120,8 @@ User.findByUsername = function(username) {
       }
     }).catch(function(e) {
       reject()
-    })
-  })
+    });
+  });
 }
 
 User.doesEmailExist = function(email) {

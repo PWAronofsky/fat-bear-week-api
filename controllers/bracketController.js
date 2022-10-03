@@ -1,6 +1,6 @@
 const ObjectID = require('mongodb').ObjectId
 const Bracket = require("../models/Bracket");
-const bracketCollection = require("../db").db().collection("brackets")
+const bracketCollection = require("../db").db().collection("brackets");
 
 exports.apiUpdateCreate = async function(req, res) {
   let existingBracket = await bracketCollection.findOne({ userId: new ObjectID(req.apiUser._id) });

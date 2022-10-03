@@ -1,7 +1,11 @@
-const User = require("../models/User")
-const Post = require("../models/Post")
-const Follow = require("../models/Follow")
-const jwt = require("jsonwebtoken")
+const User = require("../models/User");
+const Post = require("../models/Post");
+const Follow = require("../models/Follow");
+const jwt = require("jsonwebtoken");
+const { ObjectID } = require("bson");
+const { roundOnePoints, roundTwoPoints, roundThreePoints, roundFourPoints } = require("../utilities/utilities");
+const usersCollection = require('../db').db().collection("users");
+const bracketCollection = require("../db").db().collection("brackets");
 
 // how long a token lasts before expiring
 const tokenLasts = "1d"
@@ -144,12 +148,74 @@ exports.profileFollowers = async function (req, res) {
   }
 }
 
-exports.profileFollowing = async function (req, res) {
+exports.getStandings = async function (req, res) {
   try {
-    let following = await Follow.getFollowingById(req.profileUser._id)
-    //res.header("Cache-Control", "max-age=10").json(following)
-    res.json(following)
+    console.log("Get Standings Called");
+    let user = await usersCollection.findOne({ _id: new ObjectID(req.apiUser._id)})
+    let adminUser = await usersCollection.findOne({ username: "admin" });
+    let masterBracketDoc = await bracketCollection.findOne({ userId: new ObjectID( adminUser._id)});
+    let leagueBracketDocs = await usersCollection.aggregate(
+      [
+        {'$match':{leagueId: user?.leagueId }},//Optional if you want or you can leave empty
+        {'$lookup':{
+            from:'brackets',
+            localField:'_id',//fildname of a
+            foreignField:'userId',//field name of b
+            as:'userBracket' // you can also use id fiels it will replace id with the document
+        }}
+      ]
+    ).toArray();
+
+    const userScores = getUserScores(leagueBracketDocs, masterBracketDoc.bracketMap);
+
+    res.json(userScores);
   } catch (e) {
-    res.status(500).send("Error")
+    res.status(500).send("Error fetching standings");
+    console.log("error getting standings")
+  }
+}
+
+const getUserScores = (leagueBracketDocs, masterBracket) => {
+  let userScores = [];
+  leagueBracketDocs.forEach((bracketDoc) => {
+    const bracketMap = bracketDoc?.userBracket[0]?.bracketMap
+    if(!bracketMap) {
+      return;
+    }
+
+    const userScore = compareBrackets(bracketDoc.username, bracketMap, masterBracket);
+    console.log(`User Score: ${userScore}`);
+    userScores.push(userScore);
+  });
+
+  console.log(`Scores: ${userScores}`);
+  return userScores;
+}
+
+const compareBrackets = (username, userBracket, masterBracket) => {
+  let userPoints = 0;
+
+  for(let i = 1; i <= 11; i++) {
+    if(userBracket[i]?.pickedWinner === masterBracket[i]?.pickedWinner) {
+      switch (i) {
+        case i <=4: {
+          userPoints += roundOnePoints;
+        }
+        case i >=5 && i <= 8: {
+          userPoints += roundTwoPoints;
+        }
+        case i ===9 || i === 10: {
+          userPoints += roundThreePoints;
+        }
+        case i === 11: {
+          userPoints += roundFourPoints;
+        }
+      }
+    }
+  }
+
+  return {
+    username: username,
+    total: userPoints
   }
 }

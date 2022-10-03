@@ -28,7 +28,6 @@ apiRouter.post("/doesEmailExist", userController.doesEmailExist)
 apiRouter.post("/profile/:username", userController.ifUserExists, userController.sharedProfileData, userController.profileBasicData)
 apiRouter.get("/profile/:username/posts", userController.ifUserExists, userController.apiGetPostsByUsername)
 apiRouter.get("/profile/:username/followers", userController.ifUserExists, userController.profileFollowers)
-apiRouter.get("/profile/:username/following", userController.ifUserExists, userController.profileFollowing)
 
 // follow routes
 apiRouter.post("/addFollow/:username", userController.apiMustBeLoggedIn, followController.apiAddFollow)
@@ -37,5 +36,8 @@ apiRouter.post("/removeFollow/:username", userController.apiMustBeLoggedIn, foll
 //bracket routes
 apiRouter.post("/bracket/update-create", userController.apiMustBeLoggedIn, bracketController.apiUpdateCreate)
 apiRouter.post("/bracket/get", userController.apiMustBeLoggedIn, bracketController.apiGet)
+
+//standings routes
+apiRouter.post("/getStandings", userController.apiMustBeLoggedIn, userController.getStandings);
 
 module.exports = apiRouter
