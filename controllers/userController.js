@@ -166,7 +166,7 @@ exports.getStandings = async function (req, res) {
       ]
     ).toArray();
 
-    const userScores = getUserScores(leagueBracketDocs, masterBracketDoc.bracketMap);
+    const userScores = getUserScores(leagueBracketDocs, masterBracketDoc?.bracketMap?.bracketMap);
 
     res.json(userScores);
   } catch (e) {
@@ -178,13 +178,11 @@ exports.getStandings = async function (req, res) {
 const getUserScores = (leagueBracketDocs, masterBracket) => {
   let userScores = [];
   leagueBracketDocs.forEach((bracketDoc) => {
-    const bracketMap = bracketDoc?.userBracket[0]?.bracketMap
+    const bracketMap = bracketDoc?.userBracket[0]?.bracketMap?.bracketMap
     if(!bracketMap) {
       return;
     }
-
     const userScore = compareBrackets(bracketDoc.username, bracketMap, masterBracket);
-    console.log(`User Score: ${userScore}`);
     userScores.push(userScore);
   });
 
@@ -194,7 +192,7 @@ const getUserScores = (leagueBracketDocs, masterBracket) => {
             compare(a.roundThreeWins, b.roundThreeWins) ||
             compare(a.roundTwoWins, b.roundTwoWins) ||
             compare(a.roundOneWins, b.roundOneWins)
-  });
+  }).reverse();
 
   return sortedScores;
 }
@@ -214,22 +212,26 @@ const compareBrackets = (username, userBracket, masterBracket) => {
 
   for(let i = 1; i <= 11; i++) {
     if(userBracket[i]?.pickedWinner === masterBracket[i]?.pickedWinner) {
-      switch (i) {
+      switch (true) {
         case i <=4: {
           userPoints += roundOnePoints;
           roundOneWins++;
+          break;
         }
         case i >=5 && i <= 8: {
           userPoints += roundTwoPoints;
           roundTwoWins++;
+          break;
         }
         case i ===9 || i === 10: {
           userPoints += roundThreePoints;
           roundThreeWins++;
+          break;
         }
         case i === 11: {
           userPoints += roundFourPoints;
           roundFourWins++;
+          break;
         }
       }
     }

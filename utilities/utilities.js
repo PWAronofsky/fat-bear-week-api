@@ -1,4 +1,4 @@
-const roundOnePoints = 2;
-const roundTwoPoints = 3;
-const roundThreePoints = 5;
-const roundFourPoints = 8;
+exports.roundOnePoints = 2;
+exports.roundTwoPoints = 3;
+exports.roundThreePoints = 5;
+exports.roundFourPoints = 8;
