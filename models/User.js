@@ -7,15 +7,15 @@ const md5 = require('md5')
 let User = function(data, getAvatar) {
   this.data = data
   this.errors = []
-  if (getAvatar == undefined) {getAvatar = false}
+  if (getAvatar == undefined) { getAvatar = false }
   if (getAvatar) {this.getAvatar()}
 }
 
 User.prototype.cleanUp = function() {
-  if (typeof(this.data.username) != "string") {this.data.username = ""}
-  if (typeof(this.data.email) != "string") {this.data.email = ""}
-  if (typeof(this.data.password) != "string") {this.data.password = ""}
-  if (typeof(this.data.leagueId) != "string") {this.data.leagueId = ""}
+  if (typeof(this.data.username) != "string") { this.data.username = "" }
+  if (typeof(this.data.email) != "string") { this.data.email = ""}
+  if (typeof(this.data.password) != "string") { this.data.password = "" }
+  if (typeof(this.data.leagueId) != "string") { this.data.leagueId = "" }
 
   // get rid of any bogus properties
   this.data = {
@@ -41,17 +41,17 @@ User.prototype.validate = function() {
   
     // Only if username is valid then check to see if it's already taken
     if (this.data.username.length > 2 && this.data.username.length < 31 && validator.isAlphanumeric(this.data.username)) {
-      let usernameExists = await usersCollection.findOne({username: this.data.username})
+      let usernameExists = await usersCollection.findOne({ username: this.data.username })
       if (usernameExists) {this.errors.push("That username is already taken.")}
     }
   
     // Only if email is valid then check to see if it's already taken
     if (validator.isEmail(this.data.email)) {
-      let emailExists = await usersCollection.findOne({email: this.data.email})
+      let emailExists = await usersCollection.findOne({ email: this.data.email })
       if (emailExists) {this.errors.push("That email is already being used.")}
     }
 
-    let leagueExists = await leaguesCollection.findOne({leagueId: this.data.leagueId});
+    let leagueExists = await leaguesCollection.findOne({ leagueId: this.data.leagueId })
     if(!leagueExists) {this.errors.push("League Id not found.")}
 
     resolve()
@@ -91,6 +91,7 @@ User.prototype.register = function() {
       this.getAvatar()
       resolve()
     } else {
+      console.log(this.errors)
       reject(this.errors)
     }
   })

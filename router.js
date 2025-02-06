@@ -36,6 +36,7 @@ apiRouter.post("/removeFollow/:username", userController.apiMustBeLoggedIn, foll
 //bracket routes
 apiRouter.post("/bracket/update-create", userController.apiMustBeLoggedIn, bracketController.apiUpdateCreate)
 apiRouter.post("/bracket/get", userController.apiMustBeLoggedIn, bracketController.apiGet)
+apiRouter.post("/bracket/canEdit", userController.apiMustBeLoggedIn, bracketController.apiCanEdit)
 
 //standings routes
 apiRouter.post("/getStandings", userController.apiMustBeLoggedIn, userController.getStandings);
