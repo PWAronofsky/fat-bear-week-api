@@ -1,7 +1,7 @@
 {
-  "name": "fat-bear-week-api",
+  "name": "gift-coordinator-api",
   "version": "1.0.0",
-  "description": "handles fat bear brackets",
+  "description": "handles gift coordinator requests",
   "main": "db.js",
   "repository": {
     "type": "git",
