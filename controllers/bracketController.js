@@ -7,7 +7,7 @@ const usersCollection = require('../db').db().collection("users");
 exports.apiUpdateCreate = async function(req, res) {
   let existingBracket = await bracketCollection.findOne({ userId: new ObjectID(req.apiUser._id) });
   if(!existingBracket) {
-    let bracket = new Bracket(req.apiUser._id, req.body);
+    let bracket = new Bracket(req.apiUser._id, req.body.bracketMap);
     bracket
       .create()
       .then(function(newId) {
@@ -17,7 +17,7 @@ exports.apiUpdateCreate = async function(req, res) {
         res.json(errors)
       });
   } else {
-    let bracket = new Bracket(req.apiUser._id, req.body, existingBracket._id);
+    let bracket = new Bracket(req.apiUser._id, req.body.bracketMap, existingBracket._id);
     bracket
       .update()
       .then(status => {
@@ -40,7 +40,7 @@ exports.apiUpdateCreate = async function(req, res) {
 exports.apiGet = async function(req, res) {
   let bracketDoc = await bracketCollection.findOne({ userId: new ObjectID(req.apiUser._id) });
   if(bracketDoc) {
-    res.json(bracketDoc.bracketMap);
+    res.json(bracketDoc);
   } else {
     res.json("bracket not found");
   }
