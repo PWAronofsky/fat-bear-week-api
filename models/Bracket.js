@@ -1,10 +1,12 @@
 const bracketsCollection = require("../db").db().collection("brackets")
 const ObjectID = require('mongodb').ObjectId
 
-let Bracket = function(userId, bracketMap, requestedBracketId) {
+let Bracket = function(userId, bracketMap, requestedBracketId, username, leagueId) {
   this.userId = userId
   this.bracketMap = bracketMap
   this.requestedBracketId = requestedBracketId
+  this.username = username
+  this.leagueId = leagueId
   this.errors = []
 }
 
@@ -20,7 +22,7 @@ Bracket.prototype.create = function () {
     if (!this.errors.length) {
       // save bracket into database
       bracketsCollection
-        .insertOne({ userId: new ObjectID(this.userId), bracketMap: this.bracketMap })
+        .insertOne({ userId: this.userId, bracketMap: this.bracketMap, username: this.username, leagueId: this.leagueId })
         .then(info => {
           resolve(info.insertedId)
         })
