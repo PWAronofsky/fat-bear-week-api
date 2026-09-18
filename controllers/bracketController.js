@@ -1,13 +1,11 @@
-const ObjectID = require('mongodb').ObjectId
 const Bracket = require("../models/Bracket");
-const bracketCollection = require("../db").db().collection("brackets");
-const leaguesCollection = require('../db').db().collection("leagues");
-const usersCollection = require('../db').db().collection("users");
+const bracketCollection = require("../db").db("FatBearWeek").collection("brackets");
+const leaguesCollection = require('../db').db("FatBearWeek").collection("leagues");
 
 exports.apiUpdateCreate = async function(req, res) {
-  let existingBracket = await bracketCollection.findOne({ userId: new ObjectID(req.apiUser._id) });
+  let existingBracket = await bracketCollection.findOne({ userId: req.apiUser._id });
   if(!existingBracket) {
-    let bracket = new Bracket(req.apiUser._id, req.body.bracketMap);
+    let bracket = new Bracket(req.apiUser._id, req.body.bracketMap, undefined, req.apiUser.username, req.apiUser.leagueId);
     bracket
       .create()
       .then(function(newId) {
@@ -38,7 +36,7 @@ exports.apiUpdateCreate = async function(req, res) {
 }
 
 exports.apiGet = async function(req, res) {
-  let bracketDoc = await bracketCollection.findOne({ userId: new ObjectID(req.apiUser._id) });
+  let bracketDoc = await bracketCollection.findOne({ userId: req.apiUser._id });
   if(bracketDoc) {
     res.json(bracketDoc);
   } else {
@@ -47,12 +45,7 @@ exports.apiGet = async function(req, res) {
 }
 
 exports.apiCanEdit = async function(req, res) {
-  let user = await usersCollection.findOne({ _id: new ObjectID(req.apiUser._id) });
-  if(!user) {
-    res.json(false);
-    return;
-  }
-
-  let league = await leaguesCollection.findOne({ leagueId: user?.leagueId });
+  let league = await leaguesCollection.findOne({ leagueId: req.apiUser.leagueId });
+  console.log(`Enabled: ${league?.bracketEditingEnabled}`);
   res.json(!!league?.bracketEditingEnabled)
 }
