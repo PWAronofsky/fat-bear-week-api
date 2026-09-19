@@ -1,4 +1,4 @@
-const bracketsCollection = require("../db").db().collection("brackets")
+const bracketsCollection = require("../db").db("FatBearWeek").collection("brackets")
 const ObjectID = require('mongodb').ObjectId
 
 let Bracket = function(userId, bracketMap, requestedBracketId, username, leagueId) {
