@@ -15,7 +15,7 @@ exports.apiUpdateCreate = async function(req, res) {
         res.json(errors)
       });
   } else {
-    let bracket = new Bracket(req.apiUser._id, req.body.bracketMap, existingBracket._id);
+    let bracket = new Bracket(req.apiUser._id, req.body.bracketMap, existingBracket._id, req.apiUser.username);
     bracket
       .update()
       .then(status => {

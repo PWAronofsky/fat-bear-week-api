@@ -40,7 +40,7 @@ Bracket.prototype.update = function () {
   return new Promise(async (resolve, reject) => {
     this.validate()
     if (!this.errors.length) {
-      await bracketsCollection.findOneAndUpdate({ _id: new ObjectID(this.requestedBracketId) }, { $set: { bracketMap: this.bracketMap } })
+      await bracketsCollection.findOneAndUpdate({ _id: new ObjectID(this.requestedBracketId) }, { $set: { bracketMap: this.bracketMap, username: this.username } })
       resolve("success")
     } else {
       reject(this.errors)
