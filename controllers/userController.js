@@ -4,10 +4,10 @@ const bracketCollection = require("../db").db("FatBearWeek").collection("bracket
 exports.getStandings = async function (req, res) {
   try {
     console.log("Get Standings Called");
-    let masterBracketDoc = await bracketCollection.findOne({ username: "admin" });
-    let leagueBracketDocs = await bracketCollection.find({ leagueId: req.apiUser.leagueId }).toArray();
+    let masterBracketDoc = await bracketCollection.findOne({ userId: process.env.ADMIN_USER_ID });
+    let leagueBracketDocs = await bracketCollection.find({ leagueId: req.apiUser.leagueId, userId: { $ne: process.env.ADMIN_USER_ID } }).toArray();
 
-    const userScores = getUserScores(leagueBracketDocs, masterBracketDoc?.bracketMap?.bracketMap);
+    const userScores = getUserScores(leagueBracketDocs, masterBracketDoc?.bracketMap);
 
     res.json(userScores);
   } catch (e) {
@@ -19,7 +19,7 @@ exports.getStandings = async function (req, res) {
 const getUserScores = (leagueBracketDocs, masterBracket) => {
   let userScores = [];
   leagueBracketDocs.forEach((bracketDoc) => {
-    const bracketMap = bracketDoc?.bracketMap?.bracketMap
+    const bracketMap = bracketDoc?.bracketMap
     if(!bracketMap) {
       return;
     }
