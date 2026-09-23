@@ -12,7 +12,6 @@ exports.getStandings = async function (req, res) {
     res.json(userScores);
   } catch (e) {
     res.status(500).send("Error fetching standings");
-    console.log("error getting standings")
   }
 }
 
@@ -52,7 +51,7 @@ const compareBrackets = (username, userBracket, masterBracket) => {
   let roundFourWins = 0;
 
   for(let i = 1; i <= 11; i++) {
-    if(userBracket[i]?.pickedWinner === masterBracket[i]?.pickedWinner) {
+    if(userBracket[i]?.pickedWinner === masterBracket?.[i]?.pickedWinner) {
       switch (true) {
         case i <=4: {
           userPoints += roundOnePoints;

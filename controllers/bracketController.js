@@ -46,6 +46,6 @@ exports.apiGet = async function(req, res) {
 
 exports.apiCanEdit = async function(req, res) {
   let league = await leaguesCollection.findOne({ leagueId: req.apiUser.leagueId });
-  console.log(`Enabled: ${league?.bracketEditingEnabled}`);
-  res.json(!!league?.bracketEditingEnabled)
+
+  res.json(!!league?.bracketEditingEnabled || req.apiUser?._id === process.env.ADMIN_USER_ID);
 }
