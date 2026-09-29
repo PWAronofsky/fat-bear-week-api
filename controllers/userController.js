@@ -5,7 +5,7 @@ exports.getStandings = async function (req, res) {
   try {
     console.log("Get Standings Called");
     let masterBracketDoc = await bracketCollection.findOne({ userId: process.env.ADMIN_USER_ID });
-    let leagueBracketDocs = await bracketCollection.find({ leagueId: req.apiUser.leagueId }).toArray();
+        let leagueBracketDocs = await bracketCollection.find({ leagueId: req.apiUser.leagueId, userId: { $ne: process.env.ADMIN_USER_ID } }).toArray();
 
     const userScores = getUserScores(leagueBracketDocs, masterBracketDoc?.bracketMap);
 
