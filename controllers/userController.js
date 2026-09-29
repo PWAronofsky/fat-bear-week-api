@@ -5,7 +5,7 @@ exports.getStandings = async function (req, res) {
   try {
     console.log("Get Standings Called");
     let masterBracketDoc = await bracketCollection.findOne({ userId: process.env.ADMIN_USER_ID });
-    let leagueBracketDocs = await bracketCollection.find({ leagueId: req.apiUser.leagueId, userId: { $ne: process.env.ADMIN_USER_ID } }).toArray();
+    let leagueBracketDocs = await bracketCollection.find({ leagueId: req.apiUser.leagueId }).toArray();
 
     const userScores = getUserScores(leagueBracketDocs, masterBracketDoc?.bracketMap);
 
@@ -50,25 +50,25 @@ const compareBrackets = (username, userBracket, masterBracket) => {
   let roundThreeWins = 0;
   let roundFourWins = 0;
 
-  for(let i = 1; i <= 11; i++) {
+  for(let i = 1; i <= 15; i++) {
     if(userBracket[i]?.pickedWinner === masterBracket?.[i]?.pickedWinner) {
       switch (true) {
-        case i <=4: {
+        case i <=8: {
           userPoints += roundOnePoints;
           roundOneWins++;
           break;
         }
-        case i >=5 && i <= 8: {
+        case i >=9 && i <= 12: {
           userPoints += roundTwoPoints;
           roundTwoWins++;
           break;
         }
-        case i ===9 || i === 10: {
+        case i ===13 || i === 14: {
           userPoints += roundThreePoints;
           roundThreeWins++;
           break;
         }
-        case i === 11: {
+        case i === 15: {
           userPoints += roundFourPoints;
           roundFourWins++;
           break;
